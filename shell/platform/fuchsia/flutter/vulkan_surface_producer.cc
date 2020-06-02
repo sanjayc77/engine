@@ -214,7 +214,11 @@ bool VulkanSurfaceProducer::TransitionSurfacesToExternal(
         .srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
         .dstAccessMask = 0,
         .oldLayout = imageInfo.fImageLayout,
+#if defined(__aarch64__)
         .newLayout = imageInfo.fImageLayout,
+#else
+        .newLayout = VK_IMAGE_LAYOUT_GENERAL,
+#endif
         .srcQueueFamilyIndex = 0,
         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_EXTERNAL_KHR,
         .image = vk_surface->GetVkImage(),

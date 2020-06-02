@@ -15,7 +15,10 @@ namespace flutter_runner {
 class CompatTaskRunner : public fml::TaskRunner {
  public:
   CompatTaskRunner(async_dispatcher_t* dispatcher)
-      : fml::TaskRunner(nullptr), forwarding_target_(dispatcher) {
+      : fml::TaskRunner(nullptr),
+        forwarding_target_(dispatcher),
+        placeholder_id_(
+            fml::MessageLoopTaskQueues::GetInstance()->CreateTaskQueue()) {
     FML_DCHECK(forwarding_target_);
   }
 
@@ -40,8 +43,11 @@ class CompatTaskRunner : public fml::TaskRunner {
     return forwarding_target_ == async_get_default_dispatcher();
   }
 
+  fml::TaskQueueId GetTaskQueueId() override { return placeholder_id_; }
+
  private:
   async_dispatcher_t* forwarding_target_;
+  fml::TaskQueueId placeholder_id_;
 
   FML_DISALLOW_COPY_AND_ASSIGN(CompatTaskRunner);
   FML_FRIEND_MAKE_REF_COUNTED(CompatTaskRunner);
